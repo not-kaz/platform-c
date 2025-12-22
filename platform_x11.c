@@ -20,7 +20,7 @@ bool platform_start(void)
 	}
 	state.display = XOpenDisplay(NULL);
 	if (!state.display) {
-		fprintf(stderr, "platform_x11_start() failed:"
+		fprintf(stderr, "platform_start() failed:"
 				"XOpenDisplay() returned NULL.");
 		return false;
 	}
