@@ -22,12 +22,16 @@ struct platform_present_buffer_info {
 	int32_t pitch;
 };
 
-bool platform_start(void);
-void platform_shutdown(void);
-void platform_window_init(struct platform_window *window,
-		struct platform_window_desc window_desc);
-void platform_window_finish(struct platform_window *window)
-void platform_present_rgba8_buffer(struct platform_window *window,
-		struct platform_present_info present_info);
+#define PLATFORM_FUNC_CONCAT(prefix, name) platform_##prefix##_##name
+#define PLATFORM_FUNC(name) PLATFORM_FUNC_CONCAT(PLATFORM_PREFIX, name)
+#include "platform_x11.h"
+#define PLATFORM_PREFIX x11
+#endif
+
+#define platform_start PLATFORM_FUNC(start)
+#define platform_shutdown PLATFORM_FUNC(shutdown) 
+#define platform_window_init PLATFORM_FUNC(window_init)
+#define platform_window_finish PLATFORM_FUNC(window_finish)
+#define platform_present_rgba8_buffer PLATFORM_FUNC(present_rgba8_buffer)
 
 #endif /* PLATFORM_H */

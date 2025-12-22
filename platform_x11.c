@@ -60,3 +60,7 @@ struct platform_window platform_create_window(
 	state.window_count++;
 	return window;
 }
+
+void platform_present_rgba8_buffer(void)
+{
+}
