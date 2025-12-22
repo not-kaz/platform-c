@@ -53,5 +53,8 @@ void platform_window_finish(struct platform_window *window)
 {
 	XDestroyWindow(state.display, window->handle);
 }
+
+void platform_present_rgba8_buffer(struct platform_window *window,
+		struct platform_present_buffer_info buffer_info)
 {
 }
