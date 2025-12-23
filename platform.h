@@ -242,7 +242,7 @@ struct platform_window {
 	uintptr_t handle;
 };
 
-struct platform_present_buffer_info {
+struct platform_present_info {
 	const void *buffer;
 	int32_t width;
 	int32_t height;
@@ -253,7 +253,12 @@ bool platform_start(void);
 void platform_shutdown(void);
 void platform_window_init(struct platform_window *window,
 		struct platform_window_desc window_desc);
+void platform_window_finish(struct platform_window *window);
+struct platform_window_desc platform_window_get_desc(
+		struct platform_window *window);
+struct platform_event platform_poll_event(void);
 void platform_present_rgba8_buffer(struct platform_window *window,
-		struct platform_present_buffer_info buffer_info);
+		struct platform_present_info present_info);
+
 
 #endif /* PLATFORM_H */
