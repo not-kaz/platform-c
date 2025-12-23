@@ -137,11 +137,28 @@ void platform_window_finish(struct platform_window *window)
 	XDestroyWindow(state.display, window->handle);
 }
 
-struct platform_window_info platform_window_get_info(
+struct platform_window_desc platform_window_get_desc(
 		struct platform_window *window)
 {
-	XGetWindowAttribs();
-	return (struct platform_window_info){};
+	struct platform_window_desc wd = {0};
+	char *title;
+	Window dummy;
+	unsigned int sink;
+
+	XGetGeometry(state.display, window->handle, &dummy, &wd.x, &wd.y,
+			&wd.width, &wd.height, &sink, &sink);
+	XTranslateCoordinates(state.display, window->handle, state.root_window,
+			0, 0, &wd.x, &wd.y, &dummy);
+	if (XFetchName(state.display, window->handle, &title)) {
+		size_t len = strlen(title);
+
+		if (len > PLATFORM_WINDOW_TITLE_MAX_LEN - 1) {
+			len = PLATFORM_WINDOW_TITLE_MAX_LEN - 1;
+		}
+		memcpy(wd.title, title, len);
+		wd.title[len] = '\0';
+	}
+	return wd;
 }
 
 struct platform_event platform_poll_events(void)
