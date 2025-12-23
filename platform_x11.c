@@ -3,11 +3,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <X11/XKBlib.h>
 #include <X11/Xlib.h>
 #include <X11/Xutil.h> /* TODO: Check if this is necessary. */
 #include "platform.h"
+#define MAX_NUM_KEYCODES 256
 
-struct key_pair {
+struct keymap_entry {
 	char xkb_key_name[5];
 	enum platform_keycode keycode;
 };
@@ -20,11 +22,11 @@ static struct {
 	XEvent event;
 } state;
 
-static const struct key_pair key_table[] = {
+static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
 	/* Control and whitespace */
-	{ "ESC ", PLATFORM_KEYCODE_ESCAPE },
-	{ "TAB ", PLATFORM_KEYCODE_TAB },
+	{ "ESC", PLATFORM_KEYCODE_ESCAPE },
+	{ "TAB", PLATFORM_KEYCODE_TAB },
 	{ "RTRN", PLATFORM_KEYCODE_ENTER },
 	{ "BKSP", PLATFORM_KEYCODE_BACKSPACE },
 	{ "SPCE", PLATFORM_KEYCODE_SPACE },
@@ -92,10 +94,47 @@ static const struct key_pair key_table[] = {
 	{ "RWIN", PLATFORM_KEYCODE_RIGHT_GUI }
 };
 
-static void translate_key(const char xkb_keyname)
+static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
+
+static void translate_keycodes(void)
 {
-	for (size_t i = 0; i < sizeof(key_table) / sizeof(key_table[0]); i++) {
+	XkbDescPtr xkb;
+	int min_kc;
+	int max_kc;
+
+	memset(keycodes, 0, sizeof(keycodes));
+	xkb = XkbGetMap(state.display, 0, XkbUseCoreKbd);
+	if (!xkb) {
+		return;
 	}
+	if (XkbGetNames(state.display, XkbKeyNamesMask, xkb) != Success ||
+			!xkb->names || !xkb->names->keys) {
+		XkbFreeKeyboard(xkb, 0, True);
+		return;
+	}
+	min_kc = xkb->min_key_code;
+	max_kc = xkb->max_key_code;
+	if (min_kc < 0) {
+		min_kc = 0;
+	}
+	if (max_kc > MAX_NUM_KEYCODES - 1) {
+		max_kc = MAX_NUM_KEYCODES - 1;
+	}
+	for (int i = min_kc; i <= max_kc; i++) {
+		const char *name = xkb->names->keys[i].name;
+
+		if (name[0] != '\0') {
+			printf("Keycode %d: [%.4s]\n", i, name);
+		}
+
+		for (size_t j = 0; j < sizeof(keymap) / sizeof(keymap[0]); j++) {
+			if (memcmp(keymap[j].xkb_key_name, name, 4) == 0) {
+				keycodes[i] = keymap[j].keycode;
+				break;
+			}
+		}
+	}
+	XkbFreeKeyboard(xkb, 0, True);
 }
 
 bool platform_start(void)
@@ -109,6 +148,7 @@ bool platform_start(void)
 	/* TODO: Allow for multiple screens. */
 	state.screen_id = DefaultScreen(state.display);
 	state.root_window = RootWindow(state.display, state.screen_id);
+	translate_keycodes();
 	return true;
 }
 
@@ -128,6 +168,9 @@ void platform_window_init(struct platform_window *window,
 			BlackPixel(state.display, state.screen_id), 
 			WhitePixel(state.display, state.screen_id));
 	XStoreName(state.display, window->handle, window_desc.title);
+	XSelectInput(state.display, window->handle, KeyPressMask 
+			| KeyReleaseMask | ButtonPressMask 
+			| PointerMotionMask);
 	XMapWindow(state.display, window->handle);
 	XFlush(state.display);
 }
@@ -161,21 +204,30 @@ struct platform_window_desc platform_window_get_desc(
 	return wd;
 }
 
-struct platform_event platform_poll_events(void)
+struct platform_event platform_poll_event(void)
 {
 	struct platform_event event;
 
-	XNextEvent(state.display, state.event);
+	if (XPending(state.display) == 0) {
+		event.type = PLATFORM_EVENT_TYPE_NONE;
+		return event;
+	}
+	XNextEvent(state.display, &state.event);
 	switch (state.event.type) {
 	case KeyPress:
+		event.type = PLATFORM_EVENT_TYPE_KEY_PRESS;
+		event.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
 		break;
 	case KeyRelease:
+		event.type = PLATFORM_EVENT_TYPE_KEY_RELEASE;
+		event.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
 		break;
 	case ButtonPress:
 		break;
 	case MotionNotify:
 		break;
 	}
+	return event;
 }
 
 void platform_present_rgba8_buffer(struct platform_window *window,
