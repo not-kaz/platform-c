@@ -126,6 +126,7 @@ void platform_window_init(struct platform_window *window,
 			window_desc.width, window_desc.height, 1,
 			BlackPixel(state.display, state.screen_id), 
 			WhitePixel(state.display, state.screen_id));
+	XStoreName(state.display, window->handle, window_desc.title);
 	XMapWindow(state.display, window->handle);
 	XFlush(state.display);
 }
