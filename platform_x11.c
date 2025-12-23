@@ -145,7 +145,7 @@ struct platform_window_desc platform_window_get_desc(
 	Window dummy;
 	unsigned int sink;
 
-	XGetGeometry(state.display, window->handle, &dummy, &wd.x, &wd.y,
+	XGetGeometry(state.display, window->handle, &dummy, &sink, &sink,
 			&wd.width, &wd.height, &sink, &sink);
 	XTranslateCoordinates(state.display, window->handle, state.root_window,
 			0, 0, &wd.x, &wd.y, &dummy);
