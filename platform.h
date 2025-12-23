@@ -2,6 +2,7 @@
 #define PLATFORM_H
 #include <stdbool.h>
 #include <stdint.h>
+#define PLATFORM_WINDOW_TITLE_MAX_LEN 64
 
 /* NOTE: HID keycode values taken from:
  * 'https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3'*/
@@ -196,6 +197,37 @@ enum platform_keycode {
 	PLATFORM_KEYCODE_RIGHT_SHIFT = 0x000700E5u,
 	PLATFORM_KEYCODE_RIGHT_ALT = 0x000700E6u,
 	PLATFORM_KEYCODE_RIGHT_GUI = 0x000700E7u
+};
+
+enum platform_keymod {
+	PLATFORM_KEYMOD_NONE = 0,
+	PLATFORM_KEYMOD_LEFT_SHIFT = 1u << 0,
+	PLATFORM_KEYMOD_RIGHT_SHIFT = 1u << 1,
+	PLATFORM_KEYMOD_LEFT_CTRL = 1u << 2,
+	PLATFORM_KEYMOD_RIGHT_CTRL = 1u << 3,
+	PLATFORM_KEYMOD_LEFT_ALT = 1u << 4,
+	PLATFORM_KEYMOD_RIGHT_ALT = 1u << 5,
+	PLATFORM_KEYMOD_LEFT_SUPER = 1u << 6,
+	PLATFORM_KEYMOD_RIGHT_SUPER = 1u << 7
+	/* TODO: Add missing keymods. */
+};
+
+enum platform_event_type {
+	PLATFORM_EVENT_TYPE_NONE,
+	PLATFORM_EVENT_TYPE_KEY_PRESS,
+	PLATFORM_EVENT_TYPE_KEY_RELEASE
+	/* TODO: Add missing event types." */
+};
+
+struct platform_key {
+	enum platform_keycode keycode;
+	enum platform_keymod keymod;
+};
+
+struct platform_event {
+	enum platform_event_type type;
+	struct platform_key key;
+	/* TODO: Finish implementing. */
 };
 
 struct platform_window_desc {
