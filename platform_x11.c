@@ -143,7 +143,6 @@ static void translate_keycodes(void)
 		if (name[0] != '\0') {
 			printf("Keycode %d: [%.4s]\n", i, name);
 		}
-
 		for (size_t j = 0; j < sizeof(keymap) / sizeof(keymap[0]); j++) {
 			if (memcmp(keymap[j].xkb_key_name, name, 4) == 0) {
 				keycodes[i] = keymap[j].keycode;
@@ -206,7 +205,6 @@ struct platform_window_desc platform_window_get_desc(
 	unsigned int w, h;
 	Window dummy;
 	int sink;
-
 
 	XGetGeometry(state.display, window->handle, &dummy, &sink, &sink,
 			&w, &h, (unsigned int *)&sink, (unsigned int *)&sink);
