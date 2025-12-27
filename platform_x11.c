@@ -21,7 +21,6 @@ static struct {
 	Window root_window;
 	XEvent event;
 } state;
-
 static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
 	/* Control and whitespace */
