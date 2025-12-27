@@ -259,4 +259,6 @@ struct platform_event platform_poll_event(void)
 void platform_present_rgba8_buffer(struct platform_window *window,
 		struct platform_present_info present_info)
 {
+	(void)window;
+	(void)present_info;
 }
