@@ -184,11 +184,11 @@ void platform_window_init(struct platform_window *window,
 	window->handle = (uintptr_t)XCreateSimpleWindow(state.display,
 			state.root_window, window_desc.x, window_desc.y,
 			window_desc.width, window_desc.height, 1,
-			BlackPixel(state.display, state.screen_id), 
+			BlackPixel(state.display, state.screen_id),
 			WhitePixel(state.display, state.screen_id));
 	XStoreName(state.display, window->handle, window_desc.title);
-	XSelectInput(state.display, window->handle, KeyPressMask 
-			| KeyReleaseMask | ButtonPressMask 
+	XSelectInput(state.display, window->handle, KeyPressMask
+			| KeyReleaseMask | ButtonPressMask
 			| PointerMotionMask);
 	XMapWindow(state.display, window->handle);
 	XFlush(state.display);
@@ -204,13 +204,20 @@ struct platform_window_desc platform_window_get_desc(
 {
 	struct platform_window_desc wd = {0};
 	char *title;
+	int x, y;
+	unsigned int w, h;
 	Window dummy;
-	unsigned int sink;
+	int sink;
+
 
 	XGetGeometry(state.display, window->handle, &dummy, &sink, &sink,
-			&wd.width, &wd.height, &sink, &sink);
+			&w, &h, (unsigned int *)&sink, (unsigned int *)&sink);
 	XTranslateCoordinates(state.display, window->handle, state.root_window,
-			0, 0, &wd.x, &wd.y, &dummy);
+			0, 0, &x, &y, &dummy);
+	wd.x = clamp_and_cast_int_to_int32(x);
+	wd.y = clamp_and_cast_int_to_int32(y);
+	wd.width = clamp_and_cast_unsigned_to_int32(w);
+	wd.height = clamp_and_cast_unsigned_to_int32(h);
 	if (XFetchName(state.display, window->handle, &title)) {
 		size_t len = strlen(title);
 
