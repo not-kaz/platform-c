@@ -96,6 +96,25 @@ static const struct keymap_entry keymap[] = {
 
 static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
 
+static inline int32_t clamp_and_cast_int_to_int32(int x)
+{
+	if (x > INT32_MAX) {
+		return INT32_MAX;
+	}
+	if (x < INT32_MIN) {
+		return INT32_MIN;
+	}
+	return (int32_t)x;
+}
+
+static inline int32_t clamp_and_cast_unsigned_to_int32(unsigned int x)
+{
+	if ((uintmax_t)x > (uintmax_t)INT32_MAX) {
+		return INT32_MAX;
+	}
+	return (int32_t)x;
+}
+
 static void translate_keycodes(void)
 {
 	XkbDescPtr xkb;
