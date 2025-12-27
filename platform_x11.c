@@ -93,7 +93,6 @@ static const struct keymap_entry keymap[] = {
 	{ "RALT", PLATFORM_KEYCODE_RIGHT_ALT },
 	{ "RWIN", PLATFORM_KEYCODE_RIGHT_GUI }
 };
-
 static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
 
 static inline int32_t clamp_and_cast_int_to_int32(int x)
