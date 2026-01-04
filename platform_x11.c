@@ -213,18 +213,35 @@ platform_shutdown(void)
 struct platform_window *
 platform_window_create(struct platform_window_desc window_desc)
 {
-	/* TODO: Figure out how to tackle border and background colors. */
-	window->handle = (uintptr_t)XCreateSimpleWindow(state.display,
-			state.root_window, window_desc.x, window_desc.y,
-			window_desc.width, window_desc.height, 1,
-			BlackPixel(state.display, state.screen_id),
-			WhitePixel(state.display, state.screen_id));
+	struct platform_window *window;
+	XSetWindowAttributes attribs;
+
+	window = calloc(1, sizeof(struct platform_window));
+	if (window == NULL) {
+		return NULL;
+	}
+	/* NOTE: We place all created windows on the default screen. */
+	attribs.border_pixel = BlackPixel(state.display, state.screen);
+	attribs.background_pixel = BlackPixel(state.display, state.screen);
+	attribs.backing_store = NotUseful;
+	window->handle = XCreateWindow(state.display, state.root_window,
+			window_desc.x, window_desc.y,
+			window_desc.width, window_desc.height, 0,
+			state.depth, InputOutput, state.visual,
+			CWBackPixel | CWBorderPixel | CWBackingStore,
+			&attribs);
 	XStoreName(state.display, window->handle, window_desc.title);
 	XSelectInput(state.display, window->handle, KeyPressMask
 			| KeyReleaseMask | ButtonPressMask
 			| PointerMotionMask);
+	window->gc = XCreateGC(state.display, window->handle, 0, NULL);
+	if (!window->gc) {
+		XDestroyWindow(state.display, window->handle);
+		return NULL;
+	}
 	XMapWindow(state.display, window->handle);
 	XFlush(state.display);
+	return window;
 }
 
 void
