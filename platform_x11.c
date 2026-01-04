@@ -206,7 +206,8 @@ void
 platform_shutdown(void)
 {
 	XCloseDisplay(state.display);
-	/* TODO: Clear 'state' struct. */
+	/* TODO: See if there is any other cleanup required. */
+	memset(&state, 0, sizeof(state));
 }
 
 struct platform_window *
