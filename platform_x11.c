@@ -169,16 +169,36 @@ setup_keycodes(void)
 bool
 platform_start(void)
 {
+	XPixmapFormatValues *formats;
+	int format_cnt = -1;
+	int supported_bpp = -1;
+
 	state.display = XOpenDisplay(NULL);
 	if (!state.display) {
-		fprintf(stderr, "platform_start() failed:"
-				"XOpenDisplay() returned NULL.");
+		fprintf(stderr, "platform_start() failed: "
+				"XOpenDisplay() returned NULL.\n");
 		return false;
 	}
 	/* TODO: Allow for multiple screens. */
-	state.screen_id = DefaultScreen(state.display);
-	state.root_window = RootWindow(state.display, state.screen_id);
-	translate_keycodes();
+	state.screen = DefaultScreen(state.display);
+	state.root_window = RootWindow(state.display, state.screen);
+	state.visual = DefaultVisual(state.display, state.screen);
+	state.depth = DefaultDepth(state.display, state.screen);
+	formats = XListPixmapFormats(state.display, &format_cnt);
+	for (int i = 0; i < format_cnt; i++) {
+		if (formats[i].depth == state.depth) {
+			supported_bpp = formats[i].bits_per_pixel;
+			break;
+		}
+	}
+	XFree(formats);
+	if (supported_bpp != 32) {
+		XCloseDisplay(state.display);
+		fprintf(stderr, "platform_start() failed: "
+				"32-bit Pixmap format not supported.\n");
+		return false;
+	}
+	setup_keycodes();
 	return true;
 }
 
