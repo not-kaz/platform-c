@@ -123,8 +123,33 @@ static inline int32_t clamp_and_cast_unsigned_to_int32(unsigned int x)
 	return (int32_t)x;
 }
 
-static void
-setup_keycodes(void)
+static inline enum platform_mouse_button translate_mouse_button(int x_button)
+{
+	enum platform_mouse_button mb = PLATFORM_MOUSE_BUTTON_NONE;
+
+	/* NOTE: Consider moving towards translation map. */
+	/* TODO: Add more buttons (atleast 32 total). */
+	switch (x_button) {
+	case Button1:
+		mb = PLATFORM_MOUSE_BUTTON_LEFT;
+		break;
+	case Button2:
+		mb = PLATFORM_MOUSE_BUTTON_MIDDLE;
+		break;
+	case Button3:
+		mb = PLATFORM_MOUSE_BUTTON_RIGHT;
+		break;
+	case Button4:
+		mb = PLATFORM_MOUSE_BUTTON_WHEEL_UP;
+		break;
+	case Button5:
+		mb = PLATFORM_MOUSE_BUTTON_WHEEL_DOWN;
+		break;
+	}
+	return mb;
+}
+
+static void setup_keycodes(void)
 {
 	XkbDescPtr xkb;
 	int min_kc;
