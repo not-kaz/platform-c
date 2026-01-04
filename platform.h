@@ -241,7 +241,10 @@ struct platform_key {
 
 struct platform_event {
 	enum platform_event_type type;
-	struct platform_key key;
+	union {
+		enum platform_mouse_button mouse_button;
+		struct platform_key key;
+	} detail;
 	/* TODO: Finish implementing. */
 };
 
