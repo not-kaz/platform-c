@@ -23,10 +23,13 @@ struct keymap_entry {
 static struct {
 	Display *display;
 	/* NOTE: Only default screen supported for the moment. */
-	int32_t screen_id;
 	Window root_window;
+	Visual *visual;
 	XEvent event;
+	int depth;
+	int screen;
 } state;
+
 static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
 	/* Control and whitespace */
