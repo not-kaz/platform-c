@@ -2,6 +2,7 @@
 #define PLATFORM_H
 #include <stdbool.h>
 #include <stdint.h>
+
 #define PLATFORM_WINDOW_TITLE_MAX_LEN 64
 
 /* Foward declarations, implemented by backend. */
