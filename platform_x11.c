@@ -104,8 +104,7 @@ static const struct keymap_entry keymap[] = {
 
 static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
 
-static inline int32_t
-clamp_and_cast_int_to_int32(int x)
+static inline int32_t clamp_and_cast_int_to_int32(int x)
 {
 	if (x > INT32_MAX) {
 		return INT32_MAX;
@@ -116,8 +115,7 @@ clamp_and_cast_int_to_int32(int x)
 	return (int32_t)x;
 }
 
-static inline int32_t
-clamp_and_cast_unsigned_to_int32(unsigned int x)
+static inline int32_t clamp_and_cast_unsigned_to_int32(unsigned int x)
 {
 	if ((uintmax_t)x > (uintmax_t)INT32_MAX) {
 		return INT32_MAX;
@@ -166,8 +164,7 @@ setup_keycodes(void)
 	XkbFreeKeyboard(xkb, 0, True);
 }
 
-bool
-platform_start(void)
+bool platform_start(void)
 {
 	XPixmapFormatValues *formats;
 	int format_cnt = -1;
@@ -202,16 +199,14 @@ platform_start(void)
 	return true;
 }
 
-void
-platform_shutdown(void)
+void platform_shutdown(void)
 {
 	XCloseDisplay(state.display);
 	/* TODO: See if there is any other cleanup required. */
 	memset(&state, 0, sizeof(state));
 }
 
-struct platform_window *
-platform_window_create(struct platform_window_desc window_desc)
+struct platform_window *platform_window_create(struct platform_window_desc window_desc)
 {
 	struct platform_window *window;
 	XSetWindowAttributes attribs;
@@ -244,16 +239,14 @@ platform_window_create(struct platform_window_desc window_desc)
 	return window;
 }
 
-void
-platform_window_destroy(struct platform_window *window)
+void platform_window_destroy(struct platform_window *window)
 {
 	XDestroyWindow(state.display, window->handle);
 	XFreeGC(state.display, window->gc);
 	free(window);
 }
 
-struct platform_window_desc
-platform_window_get_desc(struct platform_window *window)
+struct platform_window_desc platform_window_get_desc(struct platform_window *window)
 {
 	struct platform_window_desc wd = {0};
 	char *title;
