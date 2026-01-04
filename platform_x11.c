@@ -300,28 +300,50 @@ struct platform_window_desc platform_window_get_desc(struct platform_window *win
 	return wd;
 }
 
-struct platform_event
-platform_poll_event(void)
+struct platform_event platform_poll_event(void)
 {
-	struct platform_event event;
+	struct platform_event event = {
+		.type = PLATFORM_EVENT_TYPE_NONE
+	};
 
 	if (XPending(state.display) == 0) {
-		event.type = PLATFORM_EVENT_TYPE_NONE;
 		return event;
 	}
 	XNextEvent(state.display, &state.event);
 	switch (state.event.type) {
 	case KeyPress:
-		event.type = PLATFORM_EVENT_TYPE_KEY_PRESS;
-		event.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
-		break;
 	case KeyRelease:
-		event.type = PLATFORM_EVENT_TYPE_KEY_RELEASE;
-		event.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
+		if (state.event.type == KeyPress) {
+			event.type = PLATFORM_EVENT_TYPE_KEY_PRESS;
+		} else if (state.event.type == KeyRelease) {
+			event.type = PLATFORM_EVENT_TYPE_KEY_RELEASE;
+		}
+		event.detail.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
 		break;
 	case ButtonPress:
+	case ButtonRelease:
+		/* TODO: Add proper mouse scroll and motion support. */
+		if (state.event.type == ButtonPress) {
+			event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_PRESS;
+		} else if (state.event.type == ButtonRelease) {
+			event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_RELEASE;
+		}
+		event.detail.mouse_button =
+			translate_mouse_button(state.event.xbutton.button);
 		break;
+	/* TODO: Implement missing events. */
 	case MotionNotify:
+	case ConfigureNotify:
+		break;
+	case EnterNotify:
+	case LeaveNotify:
+		break;
+	case FocusIn:
+	case FocusOut:
+		break;
+	case DestroyNotify:
+		break;
+	case ClientMessage:
 		break;
 	}
 	return event;
