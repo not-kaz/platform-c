@@ -166,7 +166,8 @@ setup_keycodes(void)
 	XkbFreeKeyboard(xkb, 0, True);
 }
 
-bool platform_start(void)
+bool
+platform_start(void)
 {
 	state.display = XOpenDisplay(NULL);
 	if (!state.display) {
@@ -181,14 +182,15 @@ bool platform_start(void)
 	return true;
 }
 
-void platform_shutdown(void)
+void
+platform_shutdown(void)
 {
 	XCloseDisplay(state.display);
 	/* TODO: Clear 'state' struct. */
 }
 
-void platform_window_init(struct platform_window *window,
-		struct platform_window_desc window_desc)
+struct platform_window *
+platform_window_create(struct platform_window_desc window_desc)
 {
 	/* TODO: Figure out how to tackle border and background colors. */
 	window->handle = (uintptr_t)XCreateSimpleWindow(state.display,
@@ -204,13 +206,14 @@ void platform_window_init(struct platform_window *window,
 	XFlush(state.display);
 }
 
-void platform_window_finish(struct platform_window *window)
+void
+platform_window_destroy(struct platform_window *window)
 {
 	XDestroyWindow(state.display, window->handle);
 }
 
-struct platform_window_desc platform_window_get_desc(
-		struct platform_window *window)
+struct platform_window_desc
+platform_window_get_desc(struct platform_window *window)
 {
 	struct platform_window_desc wd = {0};
 	char *title;
@@ -239,7 +242,8 @@ struct platform_window_desc platform_window_get_desc(
 	return wd;
 }
 
-struct platform_event platform_poll_event(void)
+struct platform_event
+platform_poll_event(void)
 {
 	struct platform_event event;
 
