@@ -248,6 +248,8 @@ void
 platform_window_destroy(struct platform_window *window)
 {
 	XDestroyWindow(state.display, window->handle);
+	XFreeGC(state.display, window->gc);
+	free(window);
 }
 
 struct platform_window_desc
