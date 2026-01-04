@@ -241,27 +241,29 @@ struct platform_window_desc {
 	char title[PLATFORM_WINDOW_TITLE_MAX_LEN];
 };
 
-struct platform_window {
-	uintptr_t handle;
-};
-
-struct platform_present_info {
+struct platform_rgba8_buffer_desc {
 	const void *buffer;
+	int32_t destination_x;
+	int32_t destination_y;
 	int32_t width;
 	int32_t height;
-	int32_t pitch;
 };
 
 bool platform_start(void);
+
 void platform_shutdown(void);
-void platform_window_init(struct platform_window *window,
+
+struct platform_window *platform_window_create(
 		struct platform_window_desc window_desc);
-void platform_window_finish(struct platform_window *window);
+
+void platform_window_destroy(struct platform_window *window);
+
 struct platform_window_desc platform_window_get_desc(
 		struct platform_window *window);
-struct platform_event platform_poll_event(void);
-void platform_present_rgba8_buffer(struct platform_window *window,
-		struct platform_present_info present_info);
 
+struct platform_event platform_poll_event(void);
+
+void platform_window_present_rgba8_buffer(struct platform_window *window,
+		struct platform_rgba8_buffer_desc buffer_desc);
 
 #endif /* PLATFORM_H */
