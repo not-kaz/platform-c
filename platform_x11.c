@@ -9,6 +9,12 @@
 #include "platform.h"
 #define MAX_NUM_KEYCODES 256
 
+struct platform_window {
+	Window handle;
+	GC gc;
+	XImage *image;
+};
+
 struct keymap_entry {
 	char xkb_key_name[5];
 	enum platform_keycode keycode;
