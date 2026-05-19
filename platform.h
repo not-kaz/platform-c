@@ -36,6 +36,8 @@ struct platform_window *platform_window_create(struct platform_window_desc windo
 
 void platform_window_destroy(struct platform_window *window);
 
+void *platform_window_get_native_handle(struct platform_window *window);
+
 struct platform_window_desc platform_window_get_desc(struct platform_window *window);
 
 bool platform_window_should_close(struct platform_window *window);
