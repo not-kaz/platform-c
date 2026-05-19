@@ -9,8 +9,6 @@
 /* Foward declarations, implemented by backend. */
 struct platform_window;
 
-/* NOTE: HID keycode values taken from:
- * 'https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3'*/
 struct platform_window_desc {
 	int32_t x;
 	int32_t y;
