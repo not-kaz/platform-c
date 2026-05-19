@@ -2,6 +2,7 @@
 #define PLATFORM_H
 #include <stdbool.h>
 #include <stdint.h>
+#include "platform_event.h"
 #include "platform_input.h"
 
 #define PLATFORM_WINDOW_TITLE_MAX_LEN 64
