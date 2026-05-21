@@ -229,6 +229,7 @@ bool platform_start(void)
 		return false;
 	}
 	setup_keycodes();
+	memset(&event_queue, 0, sizeof(event_queue));
 	return true;
 }
 
@@ -237,6 +238,7 @@ void platform_shutdown(void)
 	XCloseDisplay(x11_state.display);
 	/* TODO: See if there is any other cleanup required. */
 	memset(&x11_state, 0, sizeof(x11_state));
+	memset(&event_queue, 0, sizeof(event_queue));
 }
 
 struct platform_window *platform_window_create(struct platform_window_desc window_desc)
