@@ -25,10 +25,10 @@ static struct {
 	/* NOTE: Only default screen supported for the moment. */
 	Window root_window;
 	Visual *visual;
-	XEvent event;
 	int depth;
 	int screen;
-} state;
+} x11_state;
+
 
 static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
@@ -156,11 +156,11 @@ static void setup_keycodes(void)
 	int max_kc;
 
 	memset(keycodes, 0, sizeof(keycodes));
-	xkb = XkbGetMap(state.display, 0, XkbUseCoreKbd);
+	xkb = XkbGetMap(x11_state.display, 0, XkbUseCoreKbd);
 	if (!xkb) {
 		return;
 	}
-	if (XkbGetNames(state.display, XkbKeyNamesMask, xkb) != Success ||
+	if (XkbGetNames(x11_state.display, XkbKeyNamesMask, xkb) != Success ||
 			!xkb->names || !xkb->names->keys) {
 		XkbFreeKeyboard(xkb, 0, True);
 		return;
@@ -195,27 +195,27 @@ bool platform_start(void)
 	int format_cnt = -1;
 	int supported_bpp = -1;
 
-	state.display = XOpenDisplay(NULL);
-	if (!state.display) {
+	x11_state.display = XOpenDisplay(NULL);
+	if (!x11_state.display) {
 		fprintf(stderr, "platform_start() failed: "
 				"XOpenDisplay() returned NULL.\n");
 		return false;
 	}
 	/* TODO: Allow for multiple screens. */
-	state.screen = DefaultScreen(state.display);
-	state.root_window = RootWindow(state.display, state.screen);
-	state.visual = DefaultVisual(state.display, state.screen);
-	state.depth = DefaultDepth(state.display, state.screen);
-	formats = XListPixmapFormats(state.display, &format_cnt);
+	x11_state.screen = DefaultScreen(x11_state.display);
+	x11_state.root_window = RootWindow(x11_state.display, x11_state.screen);
+	x11_state.visual = DefaultVisual(x11_state.display, x11_state.screen);
+	x11_state.depth = DefaultDepth(x11_state.display, x11_state.screen);
+	formats = XListPixmapFormats(x11_state.display, &format_cnt);
 	for (int i = 0; i < format_cnt; i++) {
-		if (formats[i].depth == state.depth) {
+		if (formats[i].depth == x11_state.depth) {
 			supported_bpp = formats[i].bits_per_pixel;
 			break;
 		}
 	}
 	XFree(formats);
 	if (supported_bpp != 32) {
-		XCloseDisplay(state.display);
+		XCloseDisplay(x11_state.display);
 		fprintf(stderr, "platform_start() failed: "
 				"32-bit Pixmap format not supported.\n");
 		return false;
@@ -226,9 +226,9 @@ bool platform_start(void)
 
 void platform_shutdown(void)
 {
-	XCloseDisplay(state.display);
+	XCloseDisplay(x11_state.display);
 	/* TODO: See if there is any other cleanup required. */
-	memset(&state, 0, sizeof(state));
+	memset(&x11_state, 0, sizeof(x11_state));
 }
 
 struct platform_window *platform_window_create(struct platform_window_desc window_desc)
@@ -241,33 +241,33 @@ struct platform_window *platform_window_create(struct platform_window_desc windo
 		return NULL;
 	}
 	/* NOTE: We place all created windows on the default screen. */
-	attribs.border_pixel = BlackPixel(state.display, state.screen);
-	attribs.background_pixel = BlackPixel(state.display, state.screen);
+	attribs.border_pixel = BlackPixel(x11_state.display, x11_state.screen);
+	attribs.background_pixel = BlackPixel(x11_state.display, x11_state.screen);
 	attribs.backing_store = NotUseful;
-	window->handle = XCreateWindow(state.display, state.root_window,
+	window->handle = XCreateWindow(x11_state.display, x11_state.root_window,
 			window_desc.x, window_desc.y,
 			window_desc.width, window_desc.height, 0,
-			state.depth, InputOutput, state.visual,
+			x11_state.depth, InputOutput, x11_state.visual,
 			CWBackPixel | CWBorderPixel | CWBackingStore,
 			&attribs);
-	XStoreName(state.display, window->handle, window_desc.title);
-	XSelectInput(state.display, window->handle, KeyPressMask
-			| KeyReleaseMask | ButtonPressMask
+	XStoreName(x11_state.display, window->handle, window_desc.title);
+	XSelectInput(x11_state.display, window->handle, KeyPressMask
+			| KeyReleaseMask | ButtonPressMask | ButtonReleaseMask
 			| PointerMotionMask);
-	window->gc = XCreateGC(state.display, window->handle, 0, NULL);
+	window->gc = XCreateGC(x11_state.display, window->handle, 0, NULL);
 	if (!window->gc) {
-		XDestroyWindow(state.display, window->handle);
+		XDestroyWindow(x11_state.display, window->handle);
 		return NULL;
 	}
-	XMapWindow(state.display, window->handle);
-	XFlush(state.display);
+	XMapWindow(x11_state.display, window->handle);
+	XFlush(x11_state.display);
 	return window;
 }
 
 void platform_window_destroy(struct platform_window *window)
 {
-	XDestroyWindow(state.display, window->handle);
-	XFreeGC(state.display, window->gc);
+	XDestroyWindow(x11_state.display, window->handle);
+	XFreeGC(x11_state.display, window->gc);
 	free(window);
 }
 
@@ -289,15 +289,15 @@ struct platform_window_desc platform_window_get_desc(struct platform_window *win
 	Window dummy;
 	int sink;
 
-	XGetGeometry(state.display, window->handle, &dummy, &sink, &sink,
+	XGetGeometry(x11_state.display, window->handle, &dummy, &sink, &sink,
 			&w, &h, (unsigned int *)&sink, (unsigned int *)&sink);
-	XTranslateCoordinates(state.display, window->handle, state.root_window,
+	XTranslateCoordinates(x11_state.display, window->handle, x11_state.root_window,
 			0, 0, &x, &y, &dummy);
 	wd.x = clamp_and_cast_int_to_int32(x);
 	wd.y = clamp_and_cast_int_to_int32(y);
 	wd.width = clamp_and_cast_unsigned_to_int32(w);
 	wd.height = clamp_and_cast_unsigned_to_int32(h);
-	if (XFetchName(state.display, window->handle, &title)) {
+	if (XFetchName(x11_state.display, window->handle, &title)) {
 		size_t len = strlen(title);
 
 		if (len > PLATFORM_WINDOW_TITLE_MAX_LEN - 1) {
