@@ -228,6 +228,7 @@ bool platform_start(void)
 				"32-bit Pixmap format not supported.\n");
 		return false;
 	}
+	/* TODO: Inline this function as it is only used here. */
 	setup_keycodes();
 	memset(&event_queue, 0, sizeof(event_queue));
 	return true;
