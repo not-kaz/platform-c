@@ -38,7 +38,6 @@ struct {
 
 static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
 
-
 static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
 	/* Control and whitespace */
@@ -332,7 +331,6 @@ struct platform_event platform_poll_event(void)
 			struct platform_event tmp_event = {
 				.type = PLATFORM_EVENT_TYPE_NONE
 			};
-
 
 			XNextEvent(x11_state.display, &x_event);
 			switch (x_event.type) {
