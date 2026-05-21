@@ -36,6 +36,8 @@ struct {
 	uint8_t write_idx;
 } event_queue;
 
+static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
+
 
 static const struct keymap_entry keymap[] = {
 	/* TODO: Add missing keycode translations. */
@@ -109,7 +111,6 @@ static const struct keymap_entry keymap[] = {
 	{ "RWIN", PLATFORM_KEYCODE_RIGHT_GUI }
 };
 
-static enum platform_keycode keycodes[MAX_NUM_KEYCODES];
 
 static inline int32_t clamp_and_cast_int_to_int32(int x)
 {
