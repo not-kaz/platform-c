@@ -326,45 +326,67 @@ struct platform_event platform_poll_event(void)
 		.type = PLATFORM_EVENT_TYPE_NONE
 	};
 
-	if (XPending(state.display) == 0) {
-		return event;
+	if (event_queue.read_idx == event_queue.write_idx) {
+		while (XPending(x11_state.display) != 0) {
+			XEvent x_event;
+			struct platform_event tmp_event = {
+				.type = PLATFORM_EVENT_TYPE_NONE
+			};
+
+
+			XNextEvent(x11_state.display, &x_event);
+			switch (x_event.type) {
+			case KeyPress:
+			case KeyRelease:
+				if (x_event.type == KeyPress) {
+					tmp_event.type = PLATFORM_EVENT_TYPE_KEY_PRESS;
+				} else if (x_event.type == KeyRelease) {
+					tmp_event.type = PLATFORM_EVENT_TYPE_KEY_RELEASE;
+				}
+				tmp_event.detail.key.keycode = keycodes[x_event.xkey.keycode & 0xFFu];
+				break;
+			case ButtonPress:
+			case ButtonRelease:
+				/* TODO: Add proper mouse scroll and motion support. */
+				if (x_event.type == ButtonPress) {
+					tmp_event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_PRESS;
+				} else if (x_event.type == ButtonRelease) {
+					tmp_event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_RELEASE;
+				}
+				tmp_event.detail.mouse_button = translate_mouse_button(x_event.xbutton.button);
+				break;
+			/* TODO: Implement missing events. */
+			case MotionNotify:
+			case ConfigureNotify:
+				break;
+			case EnterNotify:
+			case LeaveNotify:
+				break;
+			case FocusIn:
+			case FocusOut:
+				break;
+			case DestroyNotify:
+				break;
+			case ClientMessage:
+				break;
+			}
+			if (tmp_event.type != PLATFORM_EVENT_TYPE_NONE) {
+				event_queue.buffer[event_queue.write_idx] = tmp_event;
+				if (event_queue.write_idx >= MAX_NUM_EVENTS - 1) {
+					event_queue.write_idx = 0;
+				} else {
+					event_queue.write_idx++;
+				}
+			}
+		}
 	}
-	XNextEvent(state.display, &state.event);
-	switch (state.event.type) {
-	case KeyPress:
-	case KeyRelease:
-		if (state.event.type == KeyPress) {
-			event.type = PLATFORM_EVENT_TYPE_KEY_PRESS;
-		} else if (state.event.type == KeyRelease) {
-			event.type = PLATFORM_EVENT_TYPE_KEY_RELEASE;
+	if (event_queue.read_idx != event_queue.write_idx) {
+		event = event_queue.buffer[event_queue.read_idx];
+		if (event_queue.read_idx >= MAX_NUM_EVENTS - 1) {
+			event_queue.read_idx = 0;
+		} else {
+			event_queue.read_idx++;
 		}
-		event.detail.key.keycode = keycodes[state.event.xkey.keycode & 0xFFu];
-		break;
-	case ButtonPress:
-	case ButtonRelease:
-		/* TODO: Add proper mouse scroll and motion support. */
-		if (state.event.type == ButtonPress) {
-			event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_PRESS;
-		} else if (state.event.type == ButtonRelease) {
-			event.type = PLATFORM_EVENT_TYPE_MOUSE_BUTTON_RELEASE;
-		}
-		event.detail.mouse_button =
-			translate_mouse_button(state.event.xbutton.button);
-		break;
-	/* TODO: Implement missing events. */
-	case MotionNotify:
-	case ConfigureNotify:
-		break;
-	case EnterNotify:
-	case LeaveNotify:
-		break;
-	case FocusIn:
-	case FocusOut:
-		break;
-	case DestroyNotify:
-		break;
-	case ClientMessage:
-		break;
 	}
 	return event;
 }
