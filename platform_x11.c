@@ -8,6 +8,7 @@
 #include <X11/Xutil.h> /* TODO: Check if this is necessary. */
 #include "platform.h"
 #define MAX_NUM_KEYCODES 256
+#define MAX_NUM_EVENTS 256
 
 struct platform_window {
 	Window handle;
@@ -28,6 +29,12 @@ static struct {
 	int depth;
 	int screen;
 } x11_state;
+
+struct {
+	struct platform_event buffer[MAX_NUM_EVENTS];
+	uint8_t read_idx;
+	uint8_t write_idx;
+} event_queue;
 
 
 static const struct keymap_entry keymap[] = {
