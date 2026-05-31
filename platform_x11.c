@@ -389,8 +389,8 @@ struct platform_event platform_poll_event(void)
 	return event;
 }
 
-void platform_window_present_rgba8_buffer(struct platform_window *window,
-		struct platform_rgba8_buffer_desc buffer_desc)
+void platform_window_present_bgra8_buffer(struct platform_window *window,
+		struct platform_bgra8_buffer_desc buffer_desc)
 {
 	(void)window;
 	(void)buffer_desc;

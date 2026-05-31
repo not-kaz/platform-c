@@ -18,8 +18,10 @@ struct platform_window_desc {
 	char title[PLATFORM_WINDOW_TITLE_MAX_LEN];
 };
 
-struct platform_rgba8_buffer_desc {
-	const void *buffer;
+struct platform_bgra8_buffer_desc {
+	struct {
+		uint8_t b, g, r, a;
+	} *pixels;
 	int32_t destination_x;
 	int32_t destination_y;
 	int32_t width;
@@ -44,7 +46,7 @@ bool platform_window_should_close(struct platform_window *window);
 
 bool platform_window_is_active(struct platform_window *window);
 
-void platform_window_present_rgba8_buffer(struct platform_window *window,
-		struct platform_rgba8_buffer_desc buffer_desc);
+void platform_window_present_bgra8_buffer(struct platform_window *window, 
+		struct platform_bgra8_buffer_desc buffer_desc);
 
 #endif /* PLATFORM_H */
