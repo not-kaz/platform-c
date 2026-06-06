@@ -7,9 +7,7 @@
 
 #define PLATFORM_WINDOW_TITLE_MAX_LEN 64
 
-/* Foward declarations, implemented by backend. */
-struct platform_window;
-
+/* WINDOW PROPERTY FLAGS */
 #define PLATFORM_WINDOW_PROPERTY_HIDDEN UINT64_C(0x0000000000000001)
 #define PLATFORM_WINDOW_PROPERTY_MINIMIZED UINT64_C(0x0000000000000002)
 #define PLATFORM_WINDOW_PROPERTY_MAXIMIZED UINT64_C(0x0000000000000004)
@@ -18,6 +16,9 @@ struct platform_window;
 #define PLATFORM_WINDOW_PROPERTY_BORDERLESS UINT64_C(0x0000000000000020)
 #define PLATFORM_WINDOW_PROPERTY_OPENGL UINT64_C(0x0000000000000080)
 #define PLATFORM_WINDOW_PROPERTY_VULKAN UINT64_C(0x0000000000000100)
+
+/* Foward declarations, implemented by backend. */
+struct platform_window;
 
 struct platform_window_desc {
 	int32_t x;
