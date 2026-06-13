@@ -53,7 +53,7 @@ void platform_shutdown(void);
 
 struct platform_event platform_poll_event(void);
 
-struct platform_window *platform_window_create(struct platform_window_desc window_desc);
+struct platform_window *platform_window_create(struct platform_window_desc *window_desc);
 
 void platform_window_destroy(struct platform_window *window);
 
