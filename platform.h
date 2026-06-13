@@ -18,6 +18,7 @@
 
 /* Foward declarations, implemented by backend. */
 struct platform_window;
+struct platform_surface;
 
 struct platform_window_desc {
 	int32_t x;
@@ -28,14 +29,22 @@ struct platform_window_desc {
 	uint8_t properties_flag;
 };
 
-struct platform_bgra8_buffer_desc {
-	struct {
-		uint8_t b, g, r, a;
-	} *pixels;
-	int32_t destination_x;
-	int32_t destination_y;
+enum platform_surface_format {
+	PLATFORM_SURFACE_FORMAT_UNSUPPORTED = 0,
+	PLATFORM_SURFACE_FORMAT_ABGR8888,
+	PLATFORM_SURFACE_FORMAT_ARGB8888,
+	PLATFORM_SURFACE_FORMAT_BGRA8888,
+	PLATFORM_SURFACE_FORMAT_BGRX8888,
+	PLATFORM_SURFACE_FORMAT_RGBA8888,
+	PLATFORM_SURFACE_FORMAT_XRGB8888
+};
+
+struct platform_surface_desc {
+	void *pixels;
 	int32_t width;
 	int32_t height;
+	int32_t pitch;
+	enum platform_surface_format format;
 };
 
 bool platform_start(void);
