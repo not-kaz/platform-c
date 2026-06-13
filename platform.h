@@ -65,7 +65,8 @@ bool platform_window_should_close(struct platform_window *window);
 
 bool platform_window_is_active(struct platform_window *window);
 
-void platform_window_present_bgra8_buffer(struct platform_window *window, 
-		struct platform_bgra8_buffer_desc buffer_desc);
+void platform_window_present_surface(struct platform_window *window, struct platform_surface *surface);
+
+struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc);
 
 #endif /* PLATFORM_H */
