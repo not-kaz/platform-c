@@ -69,4 +69,6 @@ void platform_window_present_surface(struct platform_window *window, struct plat
 
 struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc);
 
+struct platform_surface_desc platform_surface_get_desc(struct platform_surface *surface);
+
 #endif /* PLATFORM_H */
