@@ -5,7 +5,6 @@
 #include <string.h>
 #include <X11/XKBlib.h>
 #include <X11/Xlib.h>
-#include <X11/Xutil.h> /* TODO: Check if this is necessary. */
 #include "platform.h"
 #define MAX_NUM_KEYCODES 256
 #define MAX_NUM_EVENTS 256
