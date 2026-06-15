@@ -259,13 +259,15 @@ struct platform_window *platform_window_create(struct platform_window_desc *wind
 	attribs.border_pixel = BlackPixel(x11_state.display, x11_state.screen);
 	attribs.background_pixel = BlackPixel(x11_state.display, x11_state.screen);
 	attribs.backing_store = NotUseful;
+	/* TODO: Make x11 window respect requested x, y coordinates, currently doesn't seem to work. 
+	 * Could it be due to XWayland? Check. */
 	window->handle = XCreateWindow(x11_state.display, x11_state.root_window,
-			window_desc.x, window_desc.y,
-			window_desc.width, window_desc.height, 0,
+			window_desc->x, window_desc->y,
+			window_desc->width, window_desc->height, 0,
 			x11_state.depth, InputOutput, x11_state.visual,
 			CWBackPixel | CWBorderPixel | CWBackingStore,
 			&attribs);
-	XStoreName(x11_state.display, window->handle, window_desc.title);
+	XStoreName(x11_state.display, window->handle, window_desc->title);
 	XSelectInput(x11_state.display, window->handle, KeyPressMask
 			| KeyReleaseMask | ButtonPressMask | ButtonReleaseMask
 			| PointerMotionMask);
