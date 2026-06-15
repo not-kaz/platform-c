@@ -245,11 +245,12 @@ void platform_shutdown(void)
 	memset(&event_queue, 0, sizeof(event_queue));
 }
 
-struct platform_window *platform_window_create(struct platform_window_desc window_desc)
+struct platform_window *platform_window_create(struct platform_window_desc *window_desc, enum platform_window_error *error)
 {
 	struct platform_window *window;
 	XSetWindowAttributes attribs;
 
+	(void)error;
 	window = calloc(1, sizeof(struct platform_window));
 	if (window == NULL) {
 		return NULL;
@@ -393,9 +394,15 @@ struct platform_event platform_poll_event(void)
 	return event;
 }
 
-void platform_window_present_bgra8_buffer(struct platform_window *window,
-		struct platform_bgra8_buffer_desc buffer_desc)
+void platform_window_present_surface(struct platform_window *window, struct platform_surface *surface)
 {
 	(void)window;
-	(void)buffer_desc;
+	(void)surface;
+}
+
+struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc, enum platform_surface_error *error)
+{
+	(void)surface_desc;
+	(void)error;
+	return NULL;
 }
