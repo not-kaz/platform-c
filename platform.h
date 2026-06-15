@@ -20,6 +20,10 @@
 struct platform_window;
 struct platform_surface;
 
+enum platform_window_error {
+	PLATFORM_WINDOW_ERROR_NONE
+};
+
 struct platform_window_desc {
 	int32_t x;
 	int32_t y;
@@ -39,6 +43,11 @@ enum platform_surface_format {
 	PLATFORM_SURFACE_FORMAT_XRGB8888
 };
 
+enum platform_surface_error {
+	PLATFORM_SURFACE_ERROR_NONE,
+	PLATFORM_SURFACE_ERROR_UNSUPPORTED_FORMAT
+};
+
 struct platform_surface_desc {
 	void *pixels;
 	int32_t width;
@@ -53,7 +62,7 @@ void platform_shutdown(void);
 
 struct platform_event platform_poll_event(void);
 
-struct platform_window *platform_window_create(struct platform_window_desc *window_desc);
+struct platform_window *platform_window_create(struct platform_window_desc *window_desc, enum platform_window_error *error);
 
 void platform_window_destroy(struct platform_window *window);
 
@@ -67,7 +76,7 @@ bool platform_window_is_active(struct platform_window *window);
 
 void platform_window_present_surface(struct platform_window *window, struct platform_surface *surface);
 
-struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc);
+struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc, enum platform_surface_error *error);
 
 struct platform_surface_desc platform_surface_get_desc(struct platform_surface *surface);
 
