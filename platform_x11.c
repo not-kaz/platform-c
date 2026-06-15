@@ -15,6 +15,11 @@ struct platform_window {
 	XImage *image;
 };
 
+struct platform_surface {
+	/* TODO: Implement x11 surface internals. */
+	int32_t unused;
+};
+
 struct keymap_entry {
 	char xkb_key_name[5];
 	enum platform_keycode keycode;
