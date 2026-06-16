@@ -408,3 +408,10 @@ struct platform_surface *platform_surface_create(struct platform_surface_desc *s
 	(void)error;
 	return NULL;
 }
+
+void platform_query_supported_surface_formats(enum platform_surface_formats *formats, uint8_t *count)
+{
+	(void)formats;
+	(void)count;
+	/* TODO: Implement X11 supported format checking. */
+}
