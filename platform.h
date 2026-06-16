@@ -80,4 +80,6 @@ struct platform_surface *platform_surface_create(struct platform_surface_desc *s
 
 struct platform_surface_desc platform_surface_get_desc(struct platform_surface *surface);
 
+void platform_query_supported_surface_formats(enum platform_surface_format *formats, uint8_t *count);
+
 #endif /* PLATFORM_H */
