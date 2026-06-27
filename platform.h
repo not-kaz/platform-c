@@ -24,36 +24,28 @@ enum platform_window_error {
 	PLATFORM_WINDOW_ERROR_NONE
 };
 
+enum platform_pixel_format {
+	PLATFORM_PIXEL_FORMAT_UNSUPPORTED = 0,
+	PLATFORM_PIXEL_FORMAT_XRGB8888,
+	PLATFORM_PIXEL_FORMAT_ARGB8888,
+	PLATFORM_PIXEL_FORMAT_NUM_OF
+};
+
 struct platform_window_desc {
 	int32_t x;
 	int32_t y;
 	int32_t width;
 	int32_t height;
 	char title[PLATFORM_WINDOW_TITLE_MAX_LEN];
+	enum platform_pixel_format pixel_format;
 	uint8_t properties_flag;
 };
 
-enum platform_surface_format {
-	PLATFORM_SURFACE_FORMAT_UNSUPPORTED = 0,
-	PLATFORM_SURFACE_FORMAT_ABGR8888,
-	PLATFORM_SURFACE_FORMAT_ARGB8888,
-	PLATFORM_SURFACE_FORMAT_BGRA8888,
-	PLATFORM_SURFACE_FORMAT_BGRX8888,
-	PLATFORM_SURFACE_FORMAT_RGBA8888,
-	PLATFORM_SURFACE_FORMAT_XRGB8888
-};
-
-enum platform_surface_error {
-	PLATFORM_SURFACE_ERROR_NONE,
-	PLATFORM_SURFACE_ERROR_UNSUPPORTED_FORMAT
-};
-
-struct platform_surface_desc {
+struct platform_present_buffer_info {
 	void *pixels;
 	int32_t width;
 	int32_t height;
 	int32_t pitch;
-	enum platform_surface_format format;
 };
 
 bool platform_start(void);
@@ -74,12 +66,8 @@ bool platform_window_should_close(struct platform_window *window);
 
 bool platform_window_is_active(struct platform_window *window);
 
-void platform_window_present_surface(struct platform_window *window, struct platform_surface *surface);
+void platform_window_present_buffer(struct platform_window *window, struct platform_present_buffer_info *present_info);
 
-struct platform_surface *platform_surface_create(struct platform_surface_desc *surface_desc, enum platform_surface_error *error);
-
-struct platform_surface_desc platform_surface_get_desc(struct platform_surface *surface);
-
-void platform_query_supported_surface_formats(enum platform_surface_format *formats, uint8_t *count);
+void platform_query_supported_pixel_formats(enum platform_pixel_format *formats, uint8_t *count);
 
 #endif /* PLATFORM_H */
