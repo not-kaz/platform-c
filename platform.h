@@ -20,10 +20,6 @@
 struct platform_window;
 struct platform_surface;
 
-enum platform_window_error {
-	PLATFORM_WINDOW_ERROR_NONE
-};
-
 enum platform_pixel_format {
 	PLATFORM_PIXEL_FORMAT_UNSUPPORTED = 0,
 	PLATFORM_PIXEL_FORMAT_XRGB8888,
@@ -54,7 +50,7 @@ void platform_shutdown(void);
 
 struct platform_event platform_poll_event(void);
 
-struct platform_window *platform_window_create(struct platform_window_desc *window_desc, enum platform_window_error *error);
+struct platform_window *platform_window_create(struct platform_window_desc *window_desc);
 
 void platform_window_destroy(struct platform_window *window);
 
