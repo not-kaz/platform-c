@@ -5,6 +5,8 @@
 #include "platform_event.h"
 #include "platform_input.h"
 
+#define PLATFORM_PUBLIC_API 
+
 #define PLATFORM_WINDOW_TITLE_MAX_LEN 64
 /* WINDOW PROPERTY FLAGS */
 #define PLATFORM_WINDOW_PROPERTY_HIDDEN UINT64_C(0x0000000000000001)
