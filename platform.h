@@ -35,36 +35,38 @@ struct platform_window_desc {
 	int32_t width;
 	int32_t height;
 	char title[PLATFORM_WINDOW_TITLE_MAX_LEN];
-	enum platform_pixel_format pixel_format;
-	uint8_t properties_flag;
+	uint32_t properties_flag;
 };
 
-struct platform_present_buffer_info {
+struct platform_desc {
+	enum platform_pixel_format pixel_format;
+};
+
+struct platform_pixel_buffer_desc {
 	void *pixels;
 	int32_t width;
 	int32_t height;
-	int32_t pitch;
+	int32_t stride;
 };
 
-bool platform_start(void);
+bool platform_start(const struct platform_desc *platform_desc);
 
 void platform_shutdown(void);
 
 struct platform_event platform_poll_event(void);
 
-struct platform_window *platform_window_create(struct platform_window_desc *window_desc);
+struct platform_window *platform_window_create(const struct platform_window_desc *window_desc);
 
 void platform_window_destroy(struct platform_window *window);
 
-void *platform_window_get_native_handle(struct platform_window *window);
+void *platform_window_get_native_handle(const struct platform_window *window);
 
-struct platform_window_desc platform_window_get_desc(struct platform_window *window);
+struct platform_window_desc platform_window_get_desc(const struct platform_window *window);
 
-bool platform_window_should_close(struct platform_window *window);
+bool platform_window_is_active(const struct platform_window *window);
 
-bool platform_window_is_active(struct platform_window *window);
-
-void platform_window_present_buffer(struct platform_window *window, struct platform_present_buffer_info *present_info);
+void platform_window_present_buffer(const struct platform_window *window, 
+		const struct platform_pixel_buffer_desc *pixel_buffer_desc);
 
 void platform_query_supported_pixel_formats(enum platform_pixel_format *formats, uint8_t *count);
 
