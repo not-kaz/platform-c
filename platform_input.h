@@ -2,7 +2,7 @@
 #define PLATFORM_INPUT_H
 
 /* NOTE: HID keycode values taken from:
- * 'https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3'*/
+ * 'https://gist.github.com/mildsunrise/4e231346e2078f440969cdefb6d4caa3' */
 enum platform_keycode {
 	/* None */
 	PLATFORM_KEYCODE_NONE = 0x00000000u,
