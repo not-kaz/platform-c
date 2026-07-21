@@ -18,7 +18,6 @@
 
 /* Foward declarations, implemented by backend. */
 struct platform_window;
-struct platform_surface;
 
 enum platform_pixel_format {
 	PLATFORM_PIXEL_FORMAT_UNSUPPORTED = 0,
