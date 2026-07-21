@@ -32,7 +32,7 @@ struct platform_window_desc {
 	int32_t width;
 	int32_t height;
 	char title[PLATFORM_WINDOW_TITLE_MAX_LEN];
-	uint32_t properties_flag;
+	uint64_t properties_flag;
 };
 
 struct platform_desc {
